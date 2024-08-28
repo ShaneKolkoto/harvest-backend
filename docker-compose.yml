@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   wordpress:
     image: wordpress:latest
@@ -8,38 +6,52 @@ services:
       - "8000:80"
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: user
-      WORDPRESS_DB_PASSWORD: password  # Update this to your new password
       WORDPRESS_DB_NAME: wordpress
-    depends_on:
-      - db
+      WORDPRESS_DB_USER: user
+      WORDPRESS_DB_PASSWORD: password
+
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - app-network
 
   db:
+    container_name: database
     image: mysql:5.7
-    container_name: db
     environment:
-      MYSQL_ROOT_PASSWORD: password  # Update this to your new password
-      MYSQL_DATABASE: wordpress
       MYSQL_USER: user
       MYSQL_PASSWORD: password  # Update this to your new password
+
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - app-network
 
-  nodejs-backend:
+  node-server:
+    container_name: node-server
     build:
-      context: ./wordpress-node-backend
-    container_name: nodejs-backend
+      context: ./node-server
     ports:
       - "3000:3000"
     depends_on:
       - python-service
+      - wordpress
+    networks:
+      - app-network
 
   python-service:
-    build:
-      context: ./wordpress-python-service
     container_name: python-service
+    build:
+      context: ./python-service
     ports:
       - "5000:5000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
+  wordpress_data:
   db_data:
