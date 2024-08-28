@@ -1,0 +1,27 @@
+# Node.js modules
+node_modules/
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Docker-specific files
+Dockerfile
+docker-compose.yml
